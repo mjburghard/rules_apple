@@ -1,5 +1,5 @@
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
-load("//apple:ios.bzl", "ios_application", "ios_unit_test")
+load("//apple:ios.bzl", "ios_application", "ios_unit_test", "ios_ui_test")
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 licenses(["notice"])
@@ -48,6 +48,14 @@ ios_unit_test(
     deps = [":Tests"],
 )
 
+swift_library(
+    name = "UITests",
+    testonly = True,
+    srcs = ["UITests/HelloWorldSwiftUITests.swift"],
+    module_name = "HelloWorldSwiftUITests",
+    tags = ["manual"],
+)
+
 ios_application(
     name = "HelloWorldSwift",
     app_icons = ["//examples/resources:PhoneAppIcon.xcassets"],
@@ -60,6 +68,17 @@ ios_application(
     launch_storyboard = "//examples/resources:Launch.storyboard",
     minimum_os_version = "8.0",
     deps = [":Sources"],
+)
+
+ios_ui_test(
+    name = "HelloWorldSwiftUITests",
+    tags = ["manual"],
+    test_host = ":HelloWorldSwift",
+    bundle_id = "com.example.hello-world-swift.uitests",
+    minimum_os_version = "16.0",
+    deps = [
+        ":UITests",
+    ],
 )
 
 # Not normally needed, just done for rules_apple's examples so a
